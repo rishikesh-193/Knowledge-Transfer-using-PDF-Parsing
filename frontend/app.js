@@ -43,25 +43,42 @@ if (backendUrlLink) {
 
 checkBackendHealth();
 
-// 1. Health Check Function
-async function checkBackendHealth() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/health`, { method: 'GET' });
-    if (response.ok) {
-      const data = await response.json();
-      if (data.status === 'ok') {
-        backendStatusText.textContent = 'Render Backend Online';
-        backendStatusDot.classList.add('online');
-        backendStatusDot.classList.remove('offline');
-        return;
-      }
-    }
-    throw new Error('Health check returned non-ok status');
-  } catch (err) {
+function setBackendOnlineStatus(isOnline) {
+  if (!backendStatusText || !backendStatusDot) return;
+  if (isOnline) {
+    backendStatusText.textContent = 'Backend Online';
+    backendStatusDot.classList.add('online');
+    backendStatusDot.classList.remove('offline');
+  } else {
     backendStatusText.textContent = 'Backend Offline / Reconnecting...';
     backendStatusDot.classList.remove('online');
     backendStatusDot.classList.add('offline');
   }
+}
+
+// 1. Health Check Function
+async function checkBackendHealth() {
+  const targetUrls = [
+    `${API_BASE_URL}/health`,
+    'https://knowledge-transfer-using-pdf-parsing.onrender.com/health'
+  ];
+
+  for (const url of targetUrls) {
+    try {
+      const response = await fetch(url, { method: 'GET' });
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.status === 'ok') {
+          setBackendOnlineStatus(true);
+          return;
+        }
+      }
+    } catch (_) {
+      // Continue to fallback if fetch throws network error
+    }
+  }
+
+  setBackendOnlineStatus(false);
 }
 
 // 2. Drag & Drop File Event Listeners
@@ -135,7 +152,7 @@ uploadBtn.addEventListener('click', async () => {
     summaryChunks.textContent = data.chunks_indexed;
     indexedSummary.classList.remove('hidden');
 
-    checkBackendHealth();
+    setBackendOnlineStatus(true);
 
   } catch (err) {
     showAlert(uploadAlert, `Upload Error: ${err.message}`, 'error');
@@ -183,6 +200,7 @@ askBtn.addEventListener('click', async () => {
     answerText.textContent = answer;
     renderSources(sources);
     answerContainer.classList.remove('hidden');
+    setBackendOnlineStatus(true);
 
   } catch (err) {
     showAlert(qaAlert, `Q&A Error: ${err.message}`, 'error');
