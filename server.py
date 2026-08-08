@@ -53,10 +53,16 @@ def create_app(
         description="LangServe application for RAG Agent using PDF Parsing",
     )
 
-    # CORS configuration
+    # CORS configuration with configurable FRONTEND_ORIGIN
+    frontend_origin = os.getenv("FRONTEND_ORIGIN", "*")
+    if frontend_origin != "*":
+        allowed_origins = [origin.strip() for origin in frontend_origin.split(",") if origin.strip()]
+    else:
+        allowed_origins = ["*"]
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=allowed_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

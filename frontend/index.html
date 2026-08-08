@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG Agent — Knowledge Transfer via PDF Parsing</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">✨</div>
+        <div>
+          <h1>RAG Agent — KT PDF Parser</h1>
+          <p class="subtitle">AI Knowledge Transfer & PDF Grounded Q&A System</p>
+        </div>
+      </div>
+      <div class="status-pill" id="backend-status">
+        <span class="status-dot"></span>
+        <span id="backend-status-text">Connecting to Render backend...</span>
+      </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="main-grid">
+      <!-- Left Column: Document Upload & Index Status -->
+      <section class="card upload-card">
+        <div class="card-header">
+          <span class="step-badge">Phase 1 & 2</span>
+          <h2>PDF Document Ingestion</h2>
+        </div>
+        <p class="card-desc">Upload a text-based PDF document to parse, chunk, and index into Chroma vector database.</p>
+
+        <!-- Upload Form / Drop Zone -->
+        <div class="drop-zone" id="drop-zone">
+          <div class="drop-icon">📄</div>
+          <p class="drop-text">Drag & drop your PDF file here or <span class="browse-link">browse</span></p>
+          <input type="file" id="pdf-input" accept=".pdf" class="file-input" />
+          <span class="file-chosen" id="file-name-display">No file selected</span>
+        </div>
+
+        <button id="upload-btn" class="btn btn-primary" disabled>
+          <span class="btn-text">Upload & Index PDF</span>
+          <span class="spinner hidden" id="upload-spinner"></span>
+        </button>
+
+        <!-- Notification Alert -->
+        <div id="upload-alert" class="alert hidden"></div>
+
+        <!-- Indexed PDF Status Summary -->
+        <div id="indexed-summary" class="indexed-summary hidden">
+          <div class="summary-header">
+            <span class="summary-icon">✅</span>
+            <span class="summary-title">Active Knowledge Document</span>
+          </div>
+          <div class="summary-details">
+            <div class="detail-item">
+              <span class="detail-label">File Name</span>
+              <span class="detail-value" id="summary-filename">-</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Total Pages</span>
+              <span class="detail-value" id="summary-pages">-</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Chunks Indexed</span>
+              <span class="detail-value" id="summary-chunks">-</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Grounded Q&A Interface -->
+      <section class="card qa-card">
+        <div class="card-header">
+          <span class="step-badge badge-qa">Phase 3 & 4</span>
+          <h2>Grounded Q&A Agent</h2>
+        </div>
+        <p class="card-desc">Ask questions grounded strictly in the uploaded PDF document context.</p>
+
+        <!-- Question Form -->
+        <div class="form-group">
+          <label for="question-input">Your Question</label>
+          <textarea
+            id="question-input"
+            class="question-textarea"
+            rows="4"
+            placeholder="e.g. What database architecture is used for caching in this Knowledge Transfer document?"
+          ></textarea>
+        </div>
+
+        <button id="ask-btn" class="btn btn-secondary">
+          <span class="btn-text">Ask Grounded Question</span>
+          <span class="spinner hidden" id="ask-spinner"></span>
+        </button>
+
+        <!-- Notification Alert -->
+        <div id="qa-alert" class="alert hidden"></div>
+
+        <!-- Answer Result Container -->
+        <div id="answer-container" class="answer-container hidden">
+          <div class="answer-header">
+            <h3>Grounded Answer</h3>
+          </div>
+          <div id="answer-text" class="answer-body"></div>
+
+          <div class="sources-section">
+            <h4>Source Citations & Pages</h4>
+            <div id="sources-list" class="sources-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Deployed Backend: <a id="backend-url-link" href="https://knowledge-transfer-using-pdf-parsing.onrender.com" target="_blank">https://knowledge-transfer-using-pdf-parsing.onrender.com</a></p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
