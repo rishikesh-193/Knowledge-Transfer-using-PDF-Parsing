@@ -1,0 +1,11 @@
+.env
+.venv
+vectorstore/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.log
+temp_*.pdf
+*.pdf
